@@ -29,33 +29,32 @@ void init_graph(std::string fname, std::map<int,std::vector<int>> &g)
     in.close();
 }
 
-bool isFound(std::vector<int> &p, int f){
-	bool r = false;
-	for(auto v:p)
-		if(v==f){r=true; break;}
-	return r;
-}
-void foo(int init_node, int fin_node, std::map<int,std::vector<int>> &graph, std::string path,std::vector<int> &p)
+void foo(int init_node, int fin_node, std::map<int,std::vector<int>> &graph, std::vector<int> path,std::vector<int> &used,std::vector<std::vector<int>> &everyways)
 {
-    path += std::to_string(init_node) + " "; // добавляем в путь текущую ноду
- 		p.push_back(init_node);
+    path.push_back(init_node); // добавляем в путь текущую ноду
 		if (init_node == fin_node)
     {
-        //путь найден, печатаем и возвращаемся.        
-        std::cout<<path<<std::endl;
+        //путь найден, печатаем и возвращаемся.      
+        //std::cout<<"-->: ";
+				//for(auto p:path)cout<<p<<" ";
+				//cout<<std::endl;
+
+				everyways.push_back(path);
+				path.pop_back();	
         return;
     }
         
 		if (graph[init_node].empty() )
         return; // Это сток графа, путь не найден
- 		if(isFound(p, init_node)&&(!p.back()==init_node)){
-			cout<<path<<" cirlce"<<endl;
+ 		if(used[init_node]==1){
+			//cout<<path<<" cirlce "<<endl;
 			return;
 		}
     //рекурсивно продолжаем поиск для дочерних нод 
     for (auto subnode:graph[init_node])
     {
-    		foo(subnode,fin_node,graph,path,p);
+				used[init_node]=1;
+    		foo(subnode,fin_node,graph,path,used,everyways);
     }
     return;
 }
@@ -95,33 +94,35 @@ int main()
     
 		std::map<int,std::vector<int>> graph;
 		std::map<int,std::vector<int>> length;
-    
+		
+	
     //читаем дуги из фаила
     init_graph("./data.txt",graph);
 		init_graph("./d1.txt",length);
 		//show(graph);
 		show(length);
-	 
-	 	/*//спрашиваем о пути
-    int start, end;
-    std::cout<<"узлы начала и конца через пробел: ";
-    std::cin>>start>>end;
-    
-    //вычисляем и отображаем пути
-    std::string path = "-->: ";
-		vector <int> p;
-    foo(start,end,graph,path, true, p);
-    std::cout<<"все варианты проверены"<<std::endl;*/
 
-		//auto far = length[4];
+		//ищем все пути
 		for(auto i:length[4])
 			for(auto j:length[1]){
+				//cout<< "from " <<i<< " to " << j<<endl;
 				int start = i, end = j;
-				std::string path = "-->: ";
-				vector <int> p;
-    		foo(start,end,graph,path, p);
+				vector <int> path;
+				vector <std::vector<int>> everyways;
+				vector <int> used (graph.size()+1, 0);
+    		foo(start,end,graph,path, used, everyways);
+				
+				int min = graph.size()+1;
+				int res = 0;
+				for(int i = 0;i<everyways.size();i++) 
+					if(everyways[i].size()<min){
+						res = i;
+						min = everyways[i].size();
+					}
+				for(auto w:everyways[res])cout<<w<<" ";
+				cout<<endl;
+				//return 0;
 			}
 	
-		//bitmapConverter("./d1.txt");
-    return 0;
+		return 0;
 }
