@@ -125,7 +125,7 @@ int main()
 			string fname1, fname2;
 			cout << "type in main graph pairs file's name"<<endl;
 			cin >> fname1;
-			cout << "type in params graph pairs file's name"<<ensl;
+			cout << "type in params graph pairs file's name"<<endl;
 			cin >> fname2;
 			
 			std::map<int,std::vector<int>> graph;
