@@ -1,9 +1,3 @@
-/*
- Системный анализ и моделирование систем
- Зонирование районов региона по близости к внешней границе
- (Цициашвили Г.Ш., Бочарников В.Н., Краснопеев С.М)
- Кратчайший путь к границе региона
-*/
 #include <vector>
 #include <map>
 #include <fstream>
@@ -71,7 +65,9 @@ void show(std::map<int,std::vector<int>> &graph)
     }
 }
 
-//граф из битмап в пары
+//граф из битмап в пары, на вход файл:
+//колво вершин
+//сама матрица
 void bitmapConverter(string fname)
 {
 	std::string res="";
@@ -85,44 +81,88 @@ void bitmapConverter(string fname)
 			if(c>n) {r++; c=1; cout<<endl;} 
 			if(t==1) {cout<<r<<" "<<c<<endl; ca++;}
     }
-	cout<<ca;
+	cout<<n<< " " <<ca<<endl;
     in.close();
+}
+
+//interface
+void showMenu()
+{
+	cout<<"to exit press 0"<< endl
+		<<"to convert bitmap press 1"<<endl
+		<<"for searching shortest paths press 2"<<endl;
 }
 
 int main()
 {
-    
-		std::map<int,std::vector<int>> graph;
-		std::map<int,std::vector<int>> length;
-		
-	
-    //читаем дуги из фаила
-    init_graph("./data.txt",graph);
-		init_graph("./d1.txt",length);
-		//show(graph);
-		show(length);
-
-		//ищем все пути
-		for(auto i:length[4])
-			for(auto j:length[1]){
-				//cout<< "from " <<i<< " to " << j<<endl;
-				int start = i, end = j;
-				vector <int> path;
-				vector <std::vector<int>> everyways;
-				vector <int> used (graph.size()+1, 0);
-    		foo(start,end,graph,path, used, everyways);
-				
-				int min = graph.size()+1;
-				int res = 0;
-				for(int i = 0;i<everyways.size();i++) 
-					if(everyways[i].size()<min){
-						res = i;
-						min = everyways[i].size();
-					}
-				for(auto w:everyways[res])cout<<w<<" ";
-				cout<<endl;
-				//return 0;
+	int mode = -1;
+  while(mode != 0)
+	{
+		showMenu();
+		cin >> mode;
+		if(mode == 1)
+		{
+			string fname;
+			cout << "type in bitmap file's name"<< endl;
+			cin >> fname;
+			try 
+			{
+				bitmapConverter(fname);
 			}
-	
-		return 0;
+			catch(...) 
+			{
+				cout <<"error"<<endl;
+			}
+		}
+		if(mode == 2) 
+		{
+			string fname1, fname2;
+			cout << "type in main graph pairs file's name"<<endl;
+			cin >> fname1;
+			cout << "type in params graph pairs file's name"<<ensl;
+			cin >> fname2;
+			
+			std::map<int,std::vector<int>> graph;
+			std::map<int,std::vector<int>> length;
+
+			//читаем дуги из фаила
+			init_graph(fname1,graph);
+			init_graph(fname2,length);
+
+			//проверка
+			cout << "to show adjacency lists press 1"<< endl<<"to continue press 0"<<endl;
+			int temp = 0;
+			cin >> temp;
+			if(temp==1)
+			{
+				show(graph);
+				cout<<endl;
+				show(length);
+				cout<<endl;
+			}
+
+			//ищем все пути
+			for(auto i:length[length.size()])
+				for(auto j:length[1]){
+					//cout<< "from " <<i<< " to " << j<<endl;
+					int start = i, end = j;
+					vector <int> path;
+					vector <std::vector<int>> everyways;
+					vector <int> used (graph.size()+1, 0);
+					foo(start,end,graph,path, used, everyways);
+
+					int min = graph.size()+1;
+					int res = 0;
+					for(int i = 0;i<everyways.size();i++) 
+						if(everyways[i].size()<min){
+							res = i;
+							min = everyways[i].size();
+						}
+					for(auto w:everyways[res])cout<<w<<" ";
+					cout<<endl;
+					//return 0;
+				}
+		}
+	}	
+	return 0;
 }
