@@ -1,7 +1,17 @@
 /*
 Теория принятия решения
-Множество Парето, метод прямоугольника
-nn, x, y
+Множество Парето, метод прямоугольника, мин мин
+
+описание:
+на вход файл
+	nn, x, y
+	строка, 2 - число 14 после запятой
+считаваем, получаем массив точек
+цикл
+	берем мин по х (и там мин по у) = тП
+	берем мин по у (и там мин по х) = тП
+	отбрасываем все точки меньше или равно этим двум
+выводим тП
 */
 
 #include <fstream>
@@ -12,32 +22,54 @@ nn, x, y
 
 using namespace std;
 
+void show(map<string, vector<long double>> &graph)
+//void show(map<string, vector<string>> &graph)
+{
+	//вывод текущих списков смежности в читабельном виде.
+	for (const auto &kvp : graph)
+	{
+		cout << kvp.first << "\t: ";
+		for (auto v : kvp.second)
+			cout << v << " ";
+		cout << endl;
+	}
+}
+
 int main() {
-	string fname, s_temp;
-	cout << "type in file's name" << endl;
-	cin >> fname;
-	
+	string fname;
+	//cout << "type in file's name" << endl;
+	//cin >> fname;
+	fname = "data.txt";
+
 	//читаем
-	map<string, vector<double>> dots;
-	std::ifstream in(fname, ifstream::in);
-	double x, y;
+	map<string, vector<long double>> dots;
+	//map<string, vector<string>> dots;
+	ifstream in(fname, ifstream::in);
+	long double x, y;
 	int n = 0;
+	string nn, xt, yt;
 	while (in.good())
 	{
-		if(n==0) //skip the header 
-		{	
+		if (n == 0) //skip the header 
+		{
+			in >> xt >> yt;
 			n++;
 			continue;
 		}
-		in >> s_temp >> x >> y;
-		dots[s_temp].push_back(x);
-		dots[s_temp].push_back(y);
+		in >> nn >> xt >> yt;
+		x = stold(xt);
+		y = stold(yt);
+		cout << nn << "\t" << x << y << endl;
+		dots[nn].push_back(x);
+		dots[nn].push_back(y);
 		n++;
 	}
 	in.close();
-	
-	map<string, vector<double>> res;
-	
-	
+
+	show(dots);
+
+	map<string, vector<long double>> res;
+
+
 	return 0;
 }
