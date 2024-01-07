@@ -24,16 +24,12 @@
 
 using namespace std;
 
-
-
 void show(map<int, vector<long double>> &graph)
-//void show(map<string, vector<string>> &graph)
 {
-	//вывод текущих списков смежности в читабельном виде.
-	for (const auto &kvp : graph)
+	for (const auto &cur : graph)
 	{
-		cout << kvp.first << "\t";
-		for (auto v : kvp.second)
+		cout << cur.first << "\t";
+		for (auto v : cur.second)
 			cout << std::setprecision(15) << v << "\t";
 		cout << endl;
 	}
@@ -48,11 +44,11 @@ int main() {
 		string fname;
 		//cout << "type in file's name" << endl;
 		//cin >> fname;
-		fname = "data.txt";
+		fname = "dataP4";
 
 		ifstream in(fname, ifstream::in);
 		long double x, y;
-		int n = 0;
+		int n = 0, l = 0;
 		string nn, xt, yt;
 		while (in.good())
 		{
@@ -67,14 +63,16 @@ int main() {
 			y = stold(yt);
 			nn.erase(remove(nn.begin(), nn.end(), '"'), nn.end());
 			n = stoi(nn);
+			if (n == l) continue;
 			dots[n].push_back(x);
 			dots[n].push_back(y);
+			l = n;
 		}
 		in.close();
 	}
 	map<int, vector<long double>> res; //тП's
 	
-	show(dots);
+	//show(dots);
 	
 	while (dots.size() != 0)
 	{
@@ -84,6 +82,8 @@ int main() {
 			{
 				res[cd.first].push_back(cd.second[0]);
 				res[cd.first].push_back(cd.second[1]);
+				cout << cd.first << "\t" << std::setprecision(15) << cd.second[0] << "\t" << std::setprecision(15) << cd.second[1] << endl;
+				cout << endl;			
 			}
 			dots.clear();
 			break;
@@ -127,7 +127,7 @@ int main() {
 		cout << n2 << "\t" << std::setprecision(15) << x2 << "\t" << std::setprecision(15) << y2 << endl;
 		cout << endl;
 
-		vector<int> del;// = { n1, n2 };
+		vector<int> del;
 		long double xmin, ymin, xmax, ymax;
 		xmin = min(x1, x2);
 		ymin = min(y1, y2);
@@ -147,7 +147,6 @@ int main() {
 		}
 		cout << endl;
 		for (auto i : del) dots.erase(i);
-		show(dots);
 	}
 	show(res);
 
